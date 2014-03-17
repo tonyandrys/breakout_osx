@@ -15,12 +15,12 @@
 		EA981A8C18D7526300DBA8C7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA981A8B18D7526300DBA8C7 /* MainMenu.xib */; };
 		EA981A8E18D7526300DBA8C7 /* MyScene.m in Sources */ = {isa = PBXBuildFile; fileRef = EA981A8D18D7526300DBA8C7 /* MyScene.m */; };
 		EA981A9118D7526300DBA8C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EA981A9018D7526300DBA8C7 /* AppDelegate.m */; };
-		EA981A9418D7526300DBA8C7 /* Spaceship.png in Resources */ = {isa = PBXBuildFile; fileRef = EA981A9318D7526300DBA8C7 /* Spaceship.png */; };
 		EA981A9618D7526300DBA8C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA981A9518D7526300DBA8C7 /* Images.xcassets */; };
 		EA981A9D18D7526300DBA8C7 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA981A9C18D7526300DBA8C7 /* XCTest.framework */; };
 		EA981A9E18D7526300DBA8C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA981A7718D7526300DBA8C7 /* Cocoa.framework */; };
 		EA981AA618D7526300DBA8C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EA981AA418D7526300DBA8C7 /* InfoPlist.strings */; };
 		EA981AA818D7526300DBA8C7 /* BreakoutTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EA981AA718D7526300DBA8C7 /* BreakoutTests.m */; };
+		EA981AB318D754B400DBA8C7 /* GameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = EA981AB218D754B400DBA8C7 /* GameOverScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,13 +50,14 @@
 		EA981A8F18D7526300DBA8C7 /* MyScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyScene.h; sourceTree = "<group>"; };
 		EA981A9018D7526300DBA8C7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		EA981A9218D7526300DBA8C7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		EA981A9318D7526300DBA8C7 /* Spaceship.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Spaceship.png; sourceTree = "<group>"; };
 		EA981A9518D7526300DBA8C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		EA981A9B18D7526300DBA8C7 /* BreakoutTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreakoutTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA981A9C18D7526300DBA8C7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EA981AA318D7526300DBA8C7 /* BreakoutTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BreakoutTests-Info.plist"; sourceTree = "<group>"; };
 		EA981AA518D7526300DBA8C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EA981AA718D7526300DBA8C7 /* BreakoutTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BreakoutTests.m; sourceTree = "<group>"; };
+		EA981AB118D754B400DBA8C7 /* GameOverScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverScene.h; sourceTree = "<group>"; };
+		EA981AB218D754B400DBA8C7 /* GameOverScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverScene.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,11 +126,12 @@
 			isa = PBXGroup;
 			children = (
 				EA981A8B18D7526300DBA8C7 /* MainMenu.xib */,
-				EA981A8D18D7526300DBA8C7 /* MyScene.m */,
 				EA981A8F18D7526300DBA8C7 /* MyScene.h */,
+				EA981A8D18D7526300DBA8C7 /* MyScene.m */,
 				EA981A9018D7526300DBA8C7 /* AppDelegate.m */,
 				EA981A9218D7526300DBA8C7 /* AppDelegate.h */,
-				EA981A9318D7526300DBA8C7 /* Spaceship.png */,
+				EA981AB118D754B400DBA8C7 /* GameOverScene.h */,
+				EA981AB218D754B400DBA8C7 /* GameOverScene.m */,
 				EA981A9518D7526300DBA8C7 /* Images.xcassets */,
 				EA981A8018D7526300DBA8C7 /* Supporting Files */,
 			);
@@ -241,7 +243,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA981A9418D7526300DBA8C7 /* Spaceship.png in Resources */,
 				EA981A9618D7526300DBA8C7 /* Images.xcassets in Resources */,
 				EA981A8418D7526300DBA8C7 /* InfoPlist.strings in Resources */,
 				EA981A8A18D7526300DBA8C7 /* Credits.rtf in Resources */,
@@ -266,6 +267,7 @@
 			files = (
 				EA981A8E18D7526300DBA8C7 /* MyScene.m in Sources */,
 				EA981A8618D7526300DBA8C7 /* main.m in Sources */,
+				EA981AB318D754B400DBA8C7 /* GameOverScene.m in Sources */,
 				EA981A9118D7526300DBA8C7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
