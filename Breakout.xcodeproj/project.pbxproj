@@ -58,6 +58,7 @@
 		EA981AA718D7526300DBA8C7 /* BreakoutTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BreakoutTests.m; sourceTree = "<group>"; };
 		EA981AB118D754B400DBA8C7 /* GameOverScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverScene.h; sourceTree = "<group>"; };
 		EA981AB218D754B400DBA8C7 /* GameOverScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverScene.m; sourceTree = "<group>"; };
+		EAA953D818D91E7500322806 /* KeyMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyMacros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +126,7 @@
 		EA981A7F18D7526300DBA8C7 /* Breakout */ = {
 			isa = PBXGroup;
 			children = (
+				EAA953D718D91E5400322806 /* Classes */,
 				EA981A8B18D7526300DBA8C7 /* MainMenu.xib */,
 				EA981A8F18D7526300DBA8C7 /* MyScene.h */,
 				EA981A8D18D7526300DBA8C7 /* MyScene.m */,
@@ -166,6 +168,14 @@
 				EA981AA418D7526300DBA8C7 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EAA953D718D91E5400322806 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				EAA953D818D91E7500322806 /* KeyMacros.h */,
+			);
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -475,6 +485,7 @@
 				EA981AAD18D7526300DBA8C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EA981AAE18D7526300DBA8C7 /* Build configuration list for PBXNativeTarget "BreakoutTests" */ = {
 			isa = XCConfigurationList;
@@ -483,6 +494,7 @@
 				EA981AB018D7526300DBA8C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

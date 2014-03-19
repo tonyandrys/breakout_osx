@@ -7,6 +7,7 @@
 //
 
 #import "MyScene.h"
+#import "KeyMacros.h"
 #import "GameOverScene.h"
 
 // Constants to help identify game objects
@@ -16,17 +17,14 @@ static NSString *blockCategoryName = @"block";
 static NSString *blockNodeCategoryName = @"blockNode";
 static NSString *scoreLabelName = @"scoreLabel";
 
-// Bitmasks
-static const uint32_t BALL_CATEGORY = 0x1 << 0; // 00000000000000000000000000000001
-static const uint32_t BOTTOM_CATEGORY = 0x1 << 1; // 00000000000000000000000000000010
-static const uint32_t BLOCK_CATEGORY = 0x1 << 2; // 00000000000000000000000000000100
-static const uint32_t PADDLE_CATEGORY = 0x1 << 3; // 00000000000000000000000000001000
-
-// Game Parameters
-static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
-
-
 @interface MyScene()
+
+@property (nonatomic, assign) BOOL gamePaused;
+@property (nonatomic, assign) BOOL gameStarted;
+@property (nonatomic, assign) BOOL moveLeft;
+@property (nonatomic, assign) BOOL moveRight;
+
+@property (nonatomic, assign) CGFloat paddleWidth;
 
 // Need this property to implement dragging of the paddle
 @property (nonatomic) BOOL isFingerOnPaddle;
@@ -43,13 +41,13 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
         self.physicsWorld.contactDelegate = self;
         
         // Initialize the background sprite
-        SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"bg.png"];
+        //SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"bg"];
         
         // Position it in the center of the main frame
-        background.position = CGPointMake(self.frame.size.width/2, self.frame.size.width/2);
+        //background.position = CGPointMake(self.frame.size.width/2, self.frame.size.width/2);
         
         // Add it to the scene
-        [self addChild:background];
+        //[self addChild:background];
         
         // * Change the gravity of the game world
         // Default SK gravity is (x=0.0, y=-9.8) to simulate gravity of the Earth
@@ -68,7 +66,7 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
         self.physicsBody.friction = 0.0f;
         
         // * Need to add the ball to the game
-        SKSpriteNode *ball = [SKSpriteNode spriteNodeWithImageNamed:@"ball.png"];
+        SKSpriteNode *ball = [SKSpriteNode spriteNodeWithImageNamed:@"ball"];
         
         ball.name = ballCategoryName; // Name it for future reference
         
@@ -91,14 +89,14 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
         
         // Finally, apply an impulse (force vector) to the ball to kick off the motion of the ball.
         // if dx=10.0 and dy=-10.0, then we're pushing the ball to the bottom right of the screen (slope m = -1)
-        [ball.physicsBody applyImpulse:CGVectorMake(1.5f, 1.5f)];
+        [ball.physicsBody applyImpulse:CGVectorMake(BR_BALL_SPEED, BR_BALL_SPEED)];
         
         // * Construct the paddle and its physics body
-        SKSpriteNode *paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle.png"];
+        SKSpriteNode *paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
         paddle.name = paddleCategoryName;
         
         // Paddle's initial position: x=middle of frame
-        paddle.position = CGPointMake(CGRectGetMidX(self.frame), paddle.frame.size.height*4);
+        paddle.position = CGPointMake(CGRectGetMidX(self.frame), paddle.frame.size.height*2);
         [self addChild:paddle];
         
         // Define the physics body of the paddle
@@ -110,6 +108,9 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
         // Make the paddle's physics body static, meaning it will not react to forces and impulses.
         paddle.physicsBody.dynamic = NO;
         
+        // Store the width of the paddle
+        self.paddleWidth = paddle.size.width;
+        
         // Define a physics body to stretch along the bottom of the screen to detect when the paddle misses the ball
         CGRect bottomRect = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, 1);
         SKNode* bottom = [SKNode node];
@@ -118,7 +119,7 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
         [self addChild:bottom];
         
         // Add the bricks to the scene
-        self.bricksRemaining = BRICK_COUNT;
+        self.bricksRemaining = BR_BRICK_COUNT;
         [self addBricksToScene];
         
         /*// Lazy creation of score label and score count field if a score of zero is set (game is starting up)
@@ -193,15 +194,15 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
     NSLog(@"screen height=%f", screenHeight);
     NSLog(@"screen width=%f", screenWidth);
     
-    float brickWidth = [SKSpriteNode spriteNodeWithImageNamed:@"red-brick.png"].size.width; // all bricks are the same width
-    float brickHeight = [SKSpriteNode spriteNodeWithImageNamed:@"red-brick.png"].size.height; // all bricks are the same height
+    float brickWidth = [SKSpriteNode spriteNodeWithImageNamed:@"red-brick"].size.width; // all bricks are the same width
+    float brickHeight = [SKSpriteNode spriteNodeWithImageNamed:@"red-brick"].size.height; // all bricks are the same height
     NSLog(@"brick height=%f | brick width=%f", brickHeight, brickWidth);
     
     // define the amount of padding from the top of the screen to the first brick
     float topPadding = 30.0f;
     
     // initialize an array of NSStrings corresponding to the brick images to place
-    NSArray *brickImageStrings = @[@"red-brick.png", @"orange-brick.png", @"gold-brick", @"yellow-brick", @"green-brick", @"blue-brick"];
+    NSArray *brickImageStrings = @[@"red-brick", @"orange-brick", @"gold-brick", @"yellow-brick", @"green-brick", @"blue-brick"];
     
     /*NSArray *brickNodeArray = @[
      [SKSpriteNode spriteNodeWithImageNamed:@"red-brick.png"],
@@ -218,18 +219,18 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
     CGPoint brickPos = CGPointMake(topPadding, screenHeight-topPadding);
     
     // Actually add the bricks to the scene
-    for (int i=0; i<BRICK_COUNT; i++) {
+    for (int i=0; i<BR_BRICK_COUNT; i++) {
         
         // Get the appropriate image for this row and create the node for this brick
-        NSString *imageString = [brickImageStrings objectAtIndex:floor((i/7))];
+        NSString *imageString = [brickImageStrings objectAtIndex:floor((i/BR_BRICK_ROWS))];
         SKSpriteNode *brick = [SKSpriteNode spriteNodeWithImageNamed:imageString];
         
         // Calculate new position for this block
         //NSLog(@"[i=%d] Next brick location: [", i);
         //NSLog(@" X => [%d MOD 7] * brickWidth = %d * %f", i+1, (i+1)%7, ((i+1)%7)*brickWidth);
         //NSLog(@" Y => %f - floor(i/7)=%f * brickHeight(%f) = %f", (screenHeight-topPadding), floor(i/7), brickHeight, floor(i/7) * brickHeight);
-        brickPos.x = 40.0f + ((i+1)%7)*brickWidth;
-        brickPos.y = (screenHeight-topPadding) - (floor(i/7) * brickHeight);
+        brickPos.x = 60.0f + ((i+1)%BR_BRICK_ROWS)*brickWidth;
+        brickPos.y = (screenHeight-topPadding) - (floor(i/BR_BRICK_ROWS) * brickHeight);
         
         // Position the brick
         brick.position = brickPos;
@@ -260,66 +261,82 @@ static NSInteger BRICK_COUNT = 42; // How many bricks to draw on the screen
     return NO;
 }
 
+#pragma mark - OSX Event Handling
 
+// Start movement
+-(void) keyDown:(NSEvent *)theEvent {
+    //NSLog(@"Key pressed: %hu", theEvent.keyCode);
+    [self handleKeyEvent:theEvent keyDown:YES];
+}
 
-// Fired when a finger touches down onto a view
--(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    // Get an instance of the touch and store the location of the touch event
-    UITouch *touch = [touches anyObject];
-    CGPoint touchLocation = [touch locationInNode:self];
+// Handle movement based on key pressed
+-(void) handleKeyEvent:(NSEvent *)keyEvent keyDown:(BOOL)isKeyDown {
     
-    // Search for the first physics body at the point that was touched (if any)
-    SKPhysicsBody *body = [self.physicsWorld bodyAtPoint:touchLocation];
-    
-    // If a body exists at the point touched by the user AND that body is the paddle, we know the finger is now on the paddle
-    if (body && [body.node.name isEqualToString:paddleCategoryName]) {
-        NSLog(@"Finger is on the paddle.");
-        self.isFingerOnPaddle = YES;
+    if ([keyEvent keyCode] == BR_PADDLE_LEFT) {
+        self.moveLeft = isKeyDown;
+        //NSLog(@"Left key bool: %d", isKeyDown);
+    } else if ([keyEvent keyCode] == BR_PADDLE_RIGHT) {
+        self.moveRight = isKeyDown;
+        //NSLog(@"Right key bool: %d", isKeyDown);
     }
     
 }
 
-// Sets the score of the game to newScore and updates the UI.
--(void) updatePlayerScore {
-    
-    
-    // Update UI label
-    //[self ]
-    //self.scoreCountNode.text = [NSString stringWithFormat:@"%d", self.playerScore];
-    
+// End movement
+-(void) keyUp:(NSEvent *)theEvent {
+    [self handleKeyEvent:theEvent keyDown:NO];
+    //NSLog(@"Key released: %hu", theEvent.keyCode);
 }
 
-// Fired when the finger moves within a view
--(void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    // If the user's finger is on the paddle...
-    if (self.isFingerOnPaddle) {
-        UITouch *touch = [touches anyObject];
-        
-        // Get the touch location and the previous touch location
-        CGPoint touchLocation = [touch locationInNode:self];
-        CGPoint previousLocation = [touch previousLocationInNode:self];
-        
-        // Get a reference to the paddle node by its name
-        SKSpriteNode* paddle = (SKSpriteNode *)[self childNodeWithName:paddleCategoryName];
-        
-        // Calculate the new x position of the paddle by taking the difference between the previous touch and the current touch and adding that to the current x coordinate of the paddle. If the difference is positive, the paddle will move closer to the right edge. If the difference is negative, the paddle will move closer to the left edge.
-        NSInteger difference = touchLocation.x - previousLocation.x;
-        NSInteger paddleX = paddle.position.x + difference;
-        
-        // Bound x inside the screen - if we are moving to a point outside the left or right boundary, replace the new x coordinate with the closest inside the boundaries
-        paddleX = MAX(paddleX, paddle.size.width/2); // left bound
-        paddleX = MIN(paddleX, self.size.width - paddle.size.width/2); // right bound
-        
-        // Update the position of the paddle to the new x coordinate calculated above. This can be done only because the paddle is a static body.
-        paddle.position = CGPointMake(paddleX, paddle.position.y);
+// Checks if a paddle position is at the right boundary
+-(BOOL) isPositionWithinRightBound:(CGPoint)position {
+    CGFloat screenWidth = self.frame.size.width;
+    CGFloat rightBound = screenWidth - self.paddleWidth;
+    if (position.x <= rightBound) {
+        return YES;
+    } else {
+        return NO;
     }
 }
 
-// Fired when finger is lifted
--(void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    // When a touch ends, the finger is obviously no longer on the paddle, so update the property
-    self.isFingerOnPaddle = NO;
+// Checks if a paddle position is at the left boundary
+-(BOOL) isPositionWithinLeftBound:(CGPoint)position {
+    CGFloat leftBound = 0.0f;
+    if (position.x >= leftBound) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
+- (BOOL)reachedLeftBound:(SKSpriteNode*)paddle {
+    return CGRectGetMinX(self.frame) > (paddle.position.x - self.paddleWidth/2 + 0);
+}
+
+- (BOOL)reachedRightBound:(SKSpriteNode*)paddle {
+    return CGRectGetMaxX(self.frame) <= (paddle.position.x + self.paddleWidth/2 + 0);
+}
+
+#pragma mark - Update Frame
+
+// Called before each frame is rendered
+-(void)update:(NSTimeInterval)currentTime {
+    
+    // Move Paddle if movement key (left or right) is pressed
+    // FIXME: Look at left and right bounds check, some paddle escapes the sides of the screen
+    SKSpriteNode *paddle = (SKSpriteNode *)[self childNodeWithName:paddleCategoryName]; // Get a reference to the paddle by name
+    CGPoint currentPosition = CGPointMake(paddle.position.x, paddle.position.y);
+    //NSLog(@"Position: (%f,%f)", currentPosition.x, currentPosition.y);
+    
+    if (self.moveRight && ![self reachedRightBound:paddle]) {
+        // Calculate the new position and move the paddle to the new position
+        CGPoint newPosition = CGPointMake(paddle.position.x + BR_PADDLE_SPEED, paddle.position.y);
+        paddle.position = newPosition;
+    } else if (self.moveLeft && ![self reachedLeftBound:paddle]) {
+        // Calculate the new position and move the paddle to the new position
+        CGPoint newPosition = CGPointMake(paddle.position.x - BR_PADDLE_SPEED, paddle.position.y);
+        paddle.position = newPosition;
+    }
+}
 
 @end
