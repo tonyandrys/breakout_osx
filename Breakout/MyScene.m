@@ -26,6 +26,10 @@ static NSString *scoreLabelName = @"scoreLabel";
 
 @property (nonatomic, assign) CGFloat paddleWidth;
 
+// Storage for preloaded sounds
+@property (strong, nonatomic) SKAction *ballBounceSound;
+@property (strong, nonatomic) SKAction *brickBreakSound;
+
 // Need this property to implement dragging of the paddle
 @property (nonatomic) BOOL isFingerOnPaddle;
 @property (nonatomic) NSInteger bricksRemaining;
@@ -122,6 +126,10 @@ static NSString *scoreLabelName = @"scoreLabel";
         self.bricksRemaining = BR_BRICK_COUNT;
         [self addBricksToScene];
         
+        // Start pre-loading sounds
+        self.brickBreakSound = [SKAction playSoundFileNamed:@"brick-break.wav" waitForCompletion:NO];
+        self.ballBounceSound = [SKAction playSoundFileNamed:@"ball-bounce.wav" waitForCompletion:NO];
+
         /*// Lazy creation of score label and score count field if a score of zero is set (game is starting up)
          NSLog(@"Initializing score label and counter...");
          SKLabelNode *scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"Arial"];
@@ -144,43 +152,6 @@ static NSString *scoreLabelName = @"scoreLabel";
          [self updatePlayerScore];*/
     }
     return self;
-}
-
--(void)didBeginContact:(SKPhysicsContact *)contact {
-    
-    // Set the body with the lowest category bitmask to firstBody
-    SKPhysicsBody *firstBody;
-    SKPhysicsBody *secondBody;
-    if (contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask) {
-        firstBody = contact.bodyA;
-        secondBody = contact.bodyB;
-    } else {
-        // Do the opposite
-        firstBody = contact.bodyB;
-        secondBody = contact.bodyA;
-    }
-    
-    // If the ball makes contact with a brick, destroy it and decrement the number of remaining bricks
-    if (firstBody.categoryBitMask == BALL_CATEGORY && secondBody.categoryBitMask == BLOCK_CATEGORY) {
-        [secondBody.node removeFromParent];
-        self.bricksRemaining -= 1;
-        NSLog(@"Brick destroyed (remaining: %ld)", (long)self.bricksRemaining);
-        
-        // Check if any bricks are remaining -- if none remain, the player has won the game.
-        if ([self checkGameStatus]) {
-            GameOverScene *gameOverScene = [[GameOverScene alloc] initWithSize:self.frame.size playerWon:YES];
-            [self.view presentScene:gameOverScene];
-        }
-        
-    }
-    
-    // If the ball has made contact with the bottom body, the player will lose a life.
-    if (firstBody.categoryBitMask == BALL_CATEGORY && secondBody.categoryBitMask == BOTTOM_CATEGORY) {
-        // FIXME: Change this to lose a life, but go to the gameover scene automatically for now
-        GameOverScene* gameOverScene = [[GameOverScene alloc] initWithSize:self.frame.size playerWon:NO];
-        [self.view presentScene:gameOverScene];
-    }
-    
 }
 
 // Adds BRICK_COUNT bricks to the scene and configures them appropriately
@@ -251,8 +222,6 @@ static NSString *scoreLabelName = @"scoreLabel";
     
 }
 
-// React to keyboard presses
-
 // Checks the player's progress in the game and updates the isGameWom property if all blocks have been destroyed.
 -(BOOL)checkGameStatus {
     if (self.bricksRemaining == 0) {
@@ -260,6 +229,47 @@ static NSString *scoreLabelName = @"scoreLabel";
     }
     return NO;
 }
+
+#pragma mark - Collision Handling
+
+-(void)didBeginContact:(SKPhysicsContact *)contact {
+    
+    // Set the body with the lowest category bitmask to firstBody
+    SKPhysicsBody *firstBody;
+    SKPhysicsBody *secondBody;
+    if (contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask) {
+        firstBody = contact.bodyA;
+        secondBody = contact.bodyB;
+    } else {
+        // Do the opposite
+        firstBody = contact.bodyB;
+        secondBody = contact.bodyA;
+    }
+    
+    // If the ball makes contact with a brick, destroy it and decrement the number of remaining bricks
+    if (firstBody.categoryBitMask == BALL_CATEGORY && secondBody.categoryBitMask == BLOCK_CATEGORY) {
+        [secondBody.node removeFromParent];
+        self.bricksRemaining -= 1;
+        [self runAction:self.brickBreakSound]; // Play the brick break sound
+        NSLog(@"Brick destroyed (remaining: %ld)", (long)self.bricksRemaining);
+        
+        // Check if any bricks are remaining -- if none remain, the player has won the game.
+        if ([self checkGameStatus]) {
+            GameOverScene *gameOverScene = [[GameOverScene alloc] initWithSize:self.frame.size playerWon:YES];
+            [self.view presentScene:gameOverScene];
+        }
+        
+    }
+    
+    // If the ball has made contact with the bottom body, the player will lose a life.
+    if (firstBody.categoryBitMask == BALL_CATEGORY && secondBody.categoryBitMask == BOTTOM_CATEGORY) {
+        // FIXME: Change this to lose a life, but go to the gameover scene automatically for now
+        GameOverScene* gameOverScene = [[GameOverScene alloc] initWithSize:self.frame.size playerWon:NO];
+        [self.view presentScene:gameOverScene];
+    }
+    
+}
+
 
 #pragma mark - OSX Event Handling
 
@@ -288,31 +298,12 @@ static NSString *scoreLabelName = @"scoreLabel";
     //NSLog(@"Key released: %hu", theEvent.keyCode);
 }
 
-// Checks if a paddle position is at the right boundary
--(BOOL) isPositionWithinRightBound:(CGPoint)position {
-    CGFloat screenWidth = self.frame.size.width;
-    CGFloat rightBound = screenWidth - self.paddleWidth;
-    if (position.x <= rightBound) {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-// Checks if a paddle position is at the left boundary
--(BOOL) isPositionWithinLeftBound:(CGPoint)position {
-    CGFloat leftBound = 0.0f;
-    if (position.x >= leftBound) {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
+// Checks if the paddle has reached the left boundary
 - (BOOL)reachedLeftBound:(SKSpriteNode*)paddle {
     return CGRectGetMinX(self.frame) > (paddle.position.x - self.paddleWidth/2 + 0);
 }
 
+// Checks if the paddle has reached the right boundary
 - (BOOL)reachedRightBound:(SKSpriteNode*)paddle {
     return CGRectGetMaxX(self.frame) <= (paddle.position.x + self.paddleWidth/2 + 0);
 }

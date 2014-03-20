@@ -17,7 +17,7 @@
 #define BR_BRICK_ROWS       12
 
 // Speeds & Parameters
-#define BR_BALL_SPEED       10.5f
+#define BR_BALL_SPEED       15.5f
 #define BR_PADDLE_SPEED     20.0f
 
 // Bitmasks

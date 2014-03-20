@@ -21,6 +21,8 @@
 		EA981AA618D7526300DBA8C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EA981AA418D7526300DBA8C7 /* InfoPlist.strings */; };
 		EA981AA818D7526300DBA8C7 /* BreakoutTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EA981AA718D7526300DBA8C7 /* BreakoutTests.m */; };
 		EA981AB318D754B400DBA8C7 /* GameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = EA981AB218D754B400DBA8C7 /* GameOverScene.m */; };
+		EAA953DD18D9F2FC00322806 /* ball-bounce.wav in Resources */ = {isa = PBXBuildFile; fileRef = EAA953DB18D9F2FC00322806 /* ball-bounce.wav */; };
+		EAA953DE18D9F2FC00322806 /* brick-break.wav in Resources */ = {isa = PBXBuildFile; fileRef = EAA953DC18D9F2FC00322806 /* brick-break.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		EA981AB118D754B400DBA8C7 /* GameOverScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverScene.h; sourceTree = "<group>"; };
 		EA981AB218D754B400DBA8C7 /* GameOverScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverScene.m; sourceTree = "<group>"; };
 		EAA953D818D91E7500322806 /* KeyMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyMacros.h; sourceTree = "<group>"; };
+		EAA953DB18D9F2FC00322806 /* ball-bounce.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = "ball-bounce.wav"; path = "../assets/sounds/ball-bounce.wav"; sourceTree = "<group>"; };
+		EAA953DC18D9F2FC00322806 /* brick-break.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = "brick-break.wav"; path = "../assets/sounds/brick-break.wav"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +147,7 @@
 		EA981A8018D7526300DBA8C7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				EAA953DF18D9F30600322806 /* Sounds */,
 				EA981A8118D7526300DBA8C7 /* Breakout-Info.plist */,
 				EA981A8218D7526300DBA8C7 /* InfoPlist.strings */,
 				EA981A8518D7526300DBA8C7 /* main.m */,
@@ -176,6 +181,15 @@
 				EAA953D818D91E7500322806 /* KeyMacros.h */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		EAA953DF18D9F30600322806 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				EAA953DB18D9F2FC00322806 /* ball-bounce.wav */,
+				EAA953DC18D9F2FC00322806 /* brick-break.wav */,
+			);
+			name = Sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,6 +270,8 @@
 				EA981A9618D7526300DBA8C7 /* Images.xcassets in Resources */,
 				EA981A8418D7526300DBA8C7 /* InfoPlist.strings in Resources */,
 				EA981A8A18D7526300DBA8C7 /* Credits.rtf in Resources */,
+				EAA953DD18D9F2FC00322806 /* ball-bounce.wav in Resources */,
+				EAA953DE18D9F2FC00322806 /* brick-break.wav in Resources */,
 				EA981A8C18D7526300DBA8C7 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
